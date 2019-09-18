@@ -51,7 +51,9 @@
             //events
             afterLoad: null,
             onLeave: null,
-            afterRender: null
+            afterRender: null,
+            reachTop: null,
+            reachBottom: null,
         }, custom);
 
 
@@ -103,8 +105,12 @@
             var prev = $('.pp-section.active').prev('.pp-section');
 
             //looping to the bottom if there's no more sections above
-            if (!prev.length && options.loopTop) {
-                prev = $('.pp-section').last();
+            if (!prev.length) {
+                $.isFunction(options.reachTop) && options.reachTop.call(this);
+
+                if (options.loopTop) {
+                    prev = $('.pp-section').last();
+                }
             }
 
             if (prev.length) {
@@ -119,8 +125,12 @@
             var next = $('.pp-section.active').next('.pp-section');
 
             //looping to the top if there's no more sections below
-            if(!next.length && options.loopBottom){
-                next = $('.pp-section').first();
+            if(!next.length){
+                $.isFunction(options.reachBottom) && options.reachBottom.call(this);
+
+                if (options.loopBottom) {
+                    next = $('.pp-section').first();
+                }
             }
 
             if (next.length) {
@@ -562,9 +572,9 @@
         var prevTime = new Date().getTime();
 
         function MouseWheelHandler(e) {
-        	var curTime = new Date().getTime();
+            var curTime = new Date().getTime();
 
-        	// cross-browser wheel delta
+        	  // cross-browser wheel delta
             e = e || window.event;
             var value = e.wheelDelta || -e.deltaY || -e.detail;
             var delta = Math.max(-1, Math.min(1, value));
